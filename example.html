@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Owl Carousel v2 Accessibility Layer Demo</title>
+	<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+	
+	<link rel="stylesheet" href="http://owlcarousel.owlgraphic.com/assets/owlcarousel/assets/owl.carousel.min.css">
+	<link rel="stylesheet" href="http://owlcarousel.owlgraphic.com/assets/owlcarousel/assets/owl.theme.default.min.css">
+
+	<script src="http://owlcarousel.owlgraphic.com/assets/owlcarousel/owl.carousel.js"></script>
+	<script type="text/javascript" src="owlcarousel2-a11ylayer.js"></script>
+	
+</head>
+<body>
+	
+	<div class="oc-container">
+		<div class="item-0">
+			<h2>Hi</h2>
+		</div>
+		<div class="item-1">
+			<h2>this</h2>
+		</div>
+		<div class="item-2">
+			<h2>is</h2>
+		</div>
+		<div class="item-3">
+			<h2>a</h2>
+		</div>
+		<div class="item-4">
+			<h2>carousel</h2>
+		</div>
+		<div class="item-5">
+			<h2>showing</h2>
+		</div>
+		<div class="item-6">
+			<h2>a</h2>
+		</div>
+		<div class="item-7">
+			<h2>set</h2>
+		</div>
+		<div class="item-8">
+			<h2>of</h2>
+		</div>
+		<div class="item-9">
+			<h2>slides</h2>
+		</div>
+	</div>
+
+	<div id="debug">
+	</div>
+
+	<script>
+		$(document).ready(function(){
+			$('.oc-container').owlCarousel({
+				loop: true,
+				margin: 10,
+				nav: true,
+				responsive: {
+					0: {
+						items:1
+					},
+					600: {
+						items:3
+					},
+					1000: {
+						items:5
+					}
+				}
+			});
+		});
+	</script>
+
+</body>
+</html>
