@@ -10,8 +10,6 @@ Written by [Geoffrey Roberts](mailto:g.roberts@blackicemedia.com)
 
 MIT
 
-@TODO: Set up a LICENSE file
-
 ## Features
 
 * Keyboard control (arrow keys)
