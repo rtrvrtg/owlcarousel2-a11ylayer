@@ -1,6 +1,6 @@
 /**
  * Owl Carousel v2 Accessibility Plugin
- * Version 0.2
+ * Version 0.2.1
  * © Geoffrey Roberts 2016
  */
 
@@ -21,8 +21,8 @@
       'initialized.owl.carousel': $.proxy(function(e) {
         this.setupRoot();
         if (e.namespace && !this._initialized) {
-          this.setupKeyboard();
           this.setupFocus();
+          this.setupKeyboard();
         }
         this.setCurrent(e);
       }, this),
@@ -34,9 +34,126 @@
     this.$element.on(this._handlers);
   };
 
-  // Adds support for things that don't map nicely to the root object
-  // such as event handlers
+
+  /* PREFERENCES */
+
+  /**
+   * Contains default parameters, if there were any.
+   */
+  Owl2A11y.defaults = {};
+
+
+  /* EVENT HANDLERS */
+
+  /**
+   * Adds support for things that don't map nicely to the root object
+   * such as event handlers.
+   */
   Owl2A11y.eventHandlers = {};
+
+  /**
+   * Get a callback for keyup events within this carousel.
+   *
+   * @return callback
+   *   An event callback that takes an Event as an argument.
+   */
+  Owl2A11y.prototype.getDocumentKeyUp = function(){
+    var self = this;
+    return function(e) {
+      var eventTarg = $(e.target),
+      targ = self.focused(eventTarg),
+      action = null;
+
+      if (!!targ) {
+        if (e.keyCode == 37 || e.keyCode == 38) {
+          action = 'prev.owl.carousel';
+        }
+        else if (e.keyCode == 39 || e.keyCode == 40) {
+          action = 'next.owl.carousel';
+        }
+        else if (e.keyCode == 13) {
+          if (eventTarg.hasClass('owl-prev')) action = 'prev.owl.carousel';
+          else if (eventTarg.hasClass('owl-next')) action = 'next.owl.carousel';
+          else if (eventTarg.hasClass('owl-dot')) action = 'click';
+        }
+
+        if (!!action) targ.trigger(action);
+      }
+    };
+  };
+
+
+  /* SETUP AND TEAR DOWN */
+
+  /**
+   * Assign attributes to the root element.
+   */
+  Owl2A11y.prototype.setupRoot = function() {
+    this.$element.attr({
+      role: 'listbox',
+      tabindex: '0'
+    });
+  };
+
+  /**
+   * Setup keyboard events for this carousel.
+   */
+  Owl2A11y.prototype.setupKeyboard = function(){
+    // Only needed to initialise once for the entire document
+    if (!this.$element.attr('data-owl-access-keyup')) {
+      this.$element.bind('keyup', this.getDocumentKeyUp())
+      .attr('data-owl-access-keyup', '1');
+    }
+    this.$element.attr('data-owl-carousel-focusable', '1');
+  };
+
+  /**
+   * Setup focusing behaviour for the carousel.
+   */
+  Owl2A11y.prototype.setupFocus = function(){
+    // Only needed to initialise once for the entire document
+    this.$element.bind('focusin', function(){
+      $(this).attr({
+        'data-owl-carousel-focused': '1',
+        'aria-live': 'polite'
+      }).trigger('stop.owl.autoplay');
+    }).bind('focusout', function(){
+      $(this).attr({
+        'data-owl-carousel-focused': '0',
+        'aria-live': 'off'
+      }).trigger('play.owl.autoplay');
+    });
+
+    // Add tabindex to allow navigation to be focused.
+    if (!!this._core._plugins.navigation) {
+      var navPlugin = this._core._plugins.navigation,
+      toFocus = [];
+      if (!!navPlugin._controls.$previous) {
+        toFocus.push(navPlugin._controls.$previous);
+      }
+      if (!!navPlugin._controls.$next) {
+        toFocus.push(navPlugin._controls.$next);
+      }
+      if (!!navPlugin._controls.$indicators) {
+        toFocus.push(navPlugin._controls.$indicators.children());
+      }
+      $.each(toFocus, function(){
+        this.attr('tabindex', '0');
+      });
+    }
+  };
+
+  /**
+   * Assign attributes to the root element.
+   */
+  Owl2A11y.prototype.destroy = function() {
+    this.$element.unbind('keyup', this.eventHandlers.documentKeyUp)
+    .removeAttr('data-owl-access-keyup data-owl-carousel-focusable')
+    .unbind('focusin focusout');
+  };
+
+
+  /* HELPER FUNCTIONS */
 
   /**
    * Identifies all focusable elements within a given element.
@@ -111,93 +228,12 @@
     return null;
   };
 
-  /**
-   * Get a callback for keyup events within this carousel.
-   *
-   * @return callback
-   *   An event callback that takes an Event as an argument.
-   */
-  Owl2A11y.prototype.getDocumentKeyUp = function(){
-    var self = this;
-    return function(e) {
-      var eventTarg = $(e.target),
-      targ = self.focused(eventTarg),
-      action = null;
 
-      if (!!targ) {
-        if (e.keyCode == 37 || e.keyCode == 38) {
-          action = "prev";
-        }
-        else if (e.keyCode == 39 || e.keyCode == 40) {
-          action = "next";
-        }
-        else if (e.keyCode == 13) {
-          if (eventTarg.hasClass('owl-prev')) action = "prev";
-          else if (eventTarg.hasClass('owl-next')) action = "next";
-        }
-        if (!!action) {
-          targ.trigger(action + '.owl.carousel');
-        }
-      }
-    };
-  };
-
-  Owl2A11y.defaults = {};
+  /* UPDATE FUNCTIONS */
 
   /**
-   * Assign attributes to the root element.
-   */
-  Owl2A11y.prototype.destroy = function() {
-    this.$element.unbind('keyup', this.eventHandlers.documentKeyUp)
-    .removeAttr('data-owl-access-keyup data-owl-carousel-focusable')
-    .unbind('focusin focusout');
-  };
-
-  /**
-   * Assign attributes to the root element.
-   */
-  Owl2A11y.prototype.setupRoot = function() {
-    this.$element.attr({
-      role: 'listbox',
-      tabindex: '0'
-    });
-  };
-
-  /**
-   * Setup keyboard events for this carousel.
-   */
-  Owl2A11y.prototype.setupKeyboard = function(){
-    // Only needed to initialise once for the entire document
-    if (!this.$element.attr('data-owl-access-keyup')) {
-      this.$element.bind('keyup', this.getDocumentKeyUp())
-      .attr('data-owl-access-keyup', '1');
-    }
-    this.$element.attr('data-owl-carousel-focusable', '1');
-  };
-
-  /**
-   * Setup focusing behaviour for the carousel.
-   */
-  Owl2A11y.prototype.setupFocus = function(){
-    // Only needed to initialise once for the entire document
-    this.$element.bind('focusin', function(){
-      $(this).attr({
-        'data-owl-carousel-focused': '1',
-        'aria-live': 'polite'
-      }).trigger('stop.owl.autoplay');
-    }).bind('focusout', function(){
-      $(this).attr({
-        'data-owl-carousel-focused': '0',
-        'aria-live': 'off'
-      }).trigger('play.owl.autoplay');
-    });
-  };
-
-  /**
-   * Identify active elements,
-   * set WAI-ARIA sttributes accordingly,
-   * scroll if we need to,
-   * and set up focusing.
+   * Identify active elements, set WAI-ARIA sttributes accordingly,
+   * scroll to show element if we need to, and set up focusing.
    *
    * @param Event e
    *   The triggering event.
@@ -236,9 +272,14 @@
       });
 
       if (!!targ) {
-        // Focus on the root element after we're done moving.
+        // Focus on the root element after we're done moving,
+        // but only if we're not using the controls.
         setTimeout(function(){
-          element.focus();
+          var newFocus = element;
+          if ($(':focus').closest('.owl-controls').length) {
+            newFocus = $(':focus');
+          }
+          newFocus.focus();
         }, 250);
       }
     }

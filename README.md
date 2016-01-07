@@ -21,6 +21,15 @@ MIT
 * jQuery
 * Owl Carousel v2
 
+## Features
+
+* Adds WAI-ARIA visibility and role hinting attributes
+* Adds keyboard navigation (arrow keys for previous/next, enter keys on controls)
+
+### TODO
+
+* Screen-readable text descriptions
+
 ## Installation
 
 In the `<head>` of your page, after you set up your jQuery, Owl Carousel and jquery-throttle-debounce `<script>` items, add the following:
@@ -32,9 +41,6 @@ In the `<head>` of your page, after you set up your jQuery, Owl Carousel and jqu
 ## Usage
 
 Once you've installed the accessibility layer plugin, it gets used automatically when you instantiate Owl Carousel.
-
-```javascript
-```
 
 ## Changelog
 
