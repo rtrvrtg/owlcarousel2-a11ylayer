@@ -38,6 +38,10 @@ Once you've installed the accessibility layer plugin, it gets used automatically
 
 ## Changelog
 
+### v0.2
+
+Fixed a bunch of nasty bugs, brought up to date with latest OCv2 API.
+
 ### v0.1
 
 Initial commit
