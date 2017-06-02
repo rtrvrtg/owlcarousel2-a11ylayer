@@ -147,7 +147,7 @@
    * Assign attributes to the root element.
    */
   Owl2A11y.prototype.destroy = function() {
-    this.$element.unbind('keyup', this.eventHandlers.documentKeyUp)
+    this.$element.unbind('keyup', this.getDocumentKeyUp)
     .removeAttr('data-owl-access-keyup data-owl-carousel-focusable')
     .unbind('focusin focusout');
   };
