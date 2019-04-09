@@ -111,17 +111,20 @@
    * Setup focusing behaviour for the carousel.
    */
   Owl2A11y.prototype.setupFocus = function(){
+    var autoplay = this._core._options.autoplay
     // Only needed to initialise once for the entire document
     this.$element.bind('focusin', function(){
       $(this).attr({
         'data-owl-carousel-focused': '1',
         'aria-live': 'polite'
-      }).trigger('stop.owl.autoplay');
+      })
+      .trigger('stop.owl.autoplay');
     }).bind('focusout', function(){
       $(this).attr({
         'data-owl-carousel-focused': '0',
         'aria-live': 'off'
-      }).trigger('play.owl.autoplay');
+      })
+      if (autoplay) $(this).trigger('play.owl.autoplay');
     });
 
     // Add tabindex to allow navigation to be focused.
