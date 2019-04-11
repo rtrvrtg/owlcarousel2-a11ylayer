@@ -72,9 +72,13 @@
           action = 'next.owl.carousel';
         }
         else if (e.keyCode == 13) {
-          if (eventTarg.hasClass('owl-prev')) action = 'prev.owl.carousel';
-          else if (eventTarg.hasClass('owl-next')) action = 'next.owl.carousel';
-          else if (eventTarg.hasClass('owl-dot')) action = 'click';
+          // In the latest version of owl carousel both dots and prev / next elements are buttons by default
+          // Check if element with getDocumentKeyUp is a button to avoid double clicks (1 by core + 1 by this plugin)
+          if (!eventTarg.is('button')) {
+            if (eventTarg.hasClass('owl-prev')) action = 'prev.owl.carousel';
+            else if (eventTarg.hasClass('owl-next')) action = 'next.owl.carousel';
+            else if (eventTarg.hasClass('owl-dot')) action = 'click';
+          }
         }
 
         if (!!action) targ.trigger(action);
